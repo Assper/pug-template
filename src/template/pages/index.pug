@@ -1,0 +1,18 @@
+extends ../layouts/main.pug
+include ../mixins/head.pug
+
+block head
+  +head('Site')
+  link(rel='stylesheet', href='css/style.css')
+
+block header
+  include ../common/header.pug
+
+block main
+  main#content
+
+block footer
+  include ../common/footer.pug
+
+block scripts
+  script(src='js/bundle.js')
