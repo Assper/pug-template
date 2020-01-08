@@ -14,7 +14,7 @@
     "html:watch": "npm run html:build:dev -- --watch",
     "build:dev": "npm run html:build:dev && npm run css:build:dev && npm run js:build:dev",
     "js:build:dev": "webpack",
-    "css:build:dev": "sass src/styles:build/css --error-css",
+    "css:build:dev": "sass src/styles:dist/css --error-css",
     "html:build:dev": "pug ./src/template/pages --path ./src/template --out ./dist --pretty",
     "js:build": "cross-env NODE_ENV=production webpack",
     "css:build": "sass src/styles:build/css --no-source-map --style compressed",
