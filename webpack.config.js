@@ -9,16 +9,17 @@ const out = path.join(__dirname, isDev ? 'dist' : 'build')
 
 const plugins = [
   new CompressionPlugin({
-    filename: 'bundle.gz[query]',
+    filename: `${out}/js/bundle.gz[query]`,
     algorithm: 'gzip',
     test: /\.jsx?$/,
     threshold: 10240,
-    minRatio: 0
+    minRatio: 0,
+    deleteOriginalAssets: true
   }),
   new CopyPlugin([{
     from: 'src/assets/**/*',
-    to: `${out}/[1]/[name].[ext]`,
-    test: /.*\/(.+)\/.+\..+$/
+    to: `${out}/[2]/[name].[ext]`,
+    test: /.*(\/|\\)(.+)(\/|\\).+\..+$/
   }])
 ]
 
