@@ -1,4 +1,4 @@
-import './styles/css/index.css'
-import './styles/css/another.css'
+import './css/index.css'
+import './css/another.css'
 
-import './scripts/js'
+import './js'

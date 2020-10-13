@@ -1,37 +1,13 @@
 const path = require('path')
-const fs = require('fs')
 const { CleanWebpackPlugin } = require('clean-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 
-const PATHS = {
-  src: path.join(__dirname, '../src'),
-  dist: path.join(__dirname, '../dist'),
-  assets: 'assets/'
-}
+const TemplateLoader = require('./helpers/TemplateLoader')
+const { PATHS, IS_DEV } = require('./helpers/constants')
 
-const getPugTemplates = (cb) => {
-  const pages_dir = path.join(PATHS.src, 'templates/pug/pages')
-  if (!fs.existsSync(pages_dir)) return []
-
-  const pages = fs.readdirSync(pages_dir).filter(fileName => fileName.endsWith('.pug'))
-  return pages.map((page) => cb({
-    template: path.join(pages_dir, page),
-    filename: page.replace(/\.pug$/, '.html')
-  }))
-}
-
-const getHtmlTemplates = (cb) => {
-  const pages_dir = path.join(PATHS.src, 'templates/html/pages')
-  if (!fs.existsSync(pages_dir)) return []
-
-  const pages = fs.readdirSync(pages_dir).filter(fileName => fileName.endsWith('.html'))
-  return pages.map((page) => cb({
-    template: path.join(pages_dir, page),
-    filename: page
-  }))
-}
+const templates = (new TemplateLoader(PATHS.src, 'html', 'pug')).load((opts) => new HtmlWebpackPlugin(opts))
 
 module.exports = {
   externals: {
@@ -79,15 +55,15 @@ module.exports = {
           MiniCssExtractPlugin.loader,
           {
             loader: 'css-loader',
-            options: { sourceMap: true }
+            options: { sourceMap: IS_DEV }
           },
           {
             loader: 'postcss-loader',
-            options: { sourceMap: true }
+            options: { sourceMap: IS_DEV }
           },
           {
             loader: 'sass-loader',
-            options: { sourceMap: true }
+            options: { sourceMap: IS_DEV }
           }
         ]
       },
@@ -98,11 +74,11 @@ module.exports = {
           MiniCssExtractPlugin.loader,
           {
             loader: 'css-loader',
-            options: { sourceMap: true }
+            options: { sourceMap: IS_DEV }
           },
           {
             loader: 'postcss-loader',
-            options: { sourceMap: true }
+            options: { sourceMap: IS_DEV }
           }
         ]
       }
@@ -118,15 +94,13 @@ module.exports = {
         from: 'src/assets/**/*',
         to: PATHS.dist,
         transformPath: (target, absolute) => {
-          const src = '/src'
-          const index = absolute.indexOf(src)
-          const dest = absolute.slice(index + src.length)
-          return path.resolve(dest)
+          const dirents = absolute.split(/[\/\\]/)
+          const index = dirents.indexOf('src')
+          return path.join(...dirents.slice(index + 1))
         },
-        noErrorOnMissing: true
+        noErrorOnMissing: IS_DEV
       }]
     }),
-    ...getPugTemplates(options => new HtmlWebpackPlugin(options)),
-    ...getHtmlTemplates(options => new HtmlWebpackPlugin(options))
+    ...templates
   ],
 }
